@@ -1,5 +1,5 @@
 server:
-  port: 8250
+  port: 38547
 
 spring:
 
@@ -7,7 +7,7 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.66.130:3306/template_mysql8?serverTimezone=Asia/Shanghai&characterEncoding=UTF-8&useSSL=false
+    url: jdbc:mysql://192.168.66.130:3306/q_chat_bot?serverTimezone=Asia/Shanghai&characterEncoding=UTF-8&useSSL=false
     username: root
     password: 123456
   # spring data jpa自动创建表配置
@@ -94,7 +94,7 @@ template:
     button-enable: true
     # 路由白名单配置(default:null)
     allow:
-      uri: /v3/api-docs/**,/swagger-ui/**,/test/**,/doc.html,/login/auth,/**/*.css,/**/*.js,/favicon.ico
+      uri: /v3/api-docs/**,/swagger-ui/**,/test/**,/doc.html,/login/auth,/**/*.css,/**/*.js,/favicon.ico,/chat/**
   # 密码试错设定
   pass-error:
     # 是否开启试错限制(default:false)

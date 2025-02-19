@@ -17,7 +17,7 @@ import java.util.List;
 public class Generator {
 
     private static final DataSourceConfig.Builder DATA_SOURCE_CONFIG = new DataSourceConfig.Builder(
-            "jdbc:mysql://192.168.66.120:3306/template_mysql8?useSSL=false&serverTimezone=GMT%2B8",
+            "jdbc:mysql://192.168.66.130:3306/q_chat_bot?useSSL=false&serverTimezone=GMT%2B8",
             "root",
             "123456");
 
