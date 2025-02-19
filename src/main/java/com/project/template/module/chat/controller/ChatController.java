@@ -61,8 +61,16 @@ public class ChatController {
             jsonString = messageInterface.searchFriend(message);
         } else if (message.contains("添加-")) {
             messageInterface.addFriend(message);
+        } else if (message.contains("哔哩哔哩热搜")){
+//            jsonString = messageInterface.bilibiliHot();
+            jsonString = "受账号风控影响，该功能已禁用";
         }
         if (StringUtils.isNotBlank(jsonString)) {
+            int length = jsonString.length();
+            if (length > 50){
+                jsonString = jsonString.substring(0, 50);
+            }
+            jsonString += "\n！由于消息限制只能显示50字符！";
             HttpEntity<String> formEntity = new HttpEntity<>(jsonString, headers);
             restTemplate.postForObject(URL, formEntity, String.class);
         }

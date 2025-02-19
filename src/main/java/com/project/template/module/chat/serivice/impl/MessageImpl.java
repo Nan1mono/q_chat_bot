@@ -1,6 +1,9 @@
 package com.project.template.module.chat.serivice.impl;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
+import com.project.template.module.chat.pojo.bo.BiliHotData;
 import com.project.template.module.chat.pojo.entity.Friend;
 import com.project.template.module.chat.pojo.vo.GroupMessage;
 import com.project.template.module.chat.serivice.FriendService;
@@ -11,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -46,7 +50,7 @@ public class MessageImpl implements MessageInterface {
                     .or().eq(Friend::getNickName3, result)
                     .list();
             if (CollectionUtils.isNotEmpty(friendList)) {
-                GroupMessage res = GroupMessage.packageFriendMsg(friendList);
+                GroupMessage res = Friend.packageFriendMsg(friendList);
                 return JSON.toJSONString(res);
             } else {
                 return null;
@@ -76,11 +80,33 @@ public class MessageImpl implements MessageInterface {
     }
 
     @Override
-    public void bilibiliHot() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("content-type", "application/json;charset=UTF-8");
-        HttpEntity<String> formEntity = new HttpEntity<>(headers);
-        restTemplate.getForObject("https://api-hot.imsyy.top/bilibili?cache=true", formEntity);
+    public String bilibiliHot() {
+        List<BiliHotData> biliHotDataList = Lists.newArrayList();
+        JSONArray jsonArray = null;
+        try {
+            JSONObject response = JSON.parseObject(restTemplate.getForObject("https://api-hot.imsyy.top/bilibili?cache=true", String.class));
+            jsonArray = response.getJSONArray("data");
+        } catch (RestClientException e) {
+            return null;
+        }
+        int i = 1;
+        if (CollectionUtils.isNotEmpty(jsonArray)) {
+            for (Object jsonObject : jsonArray) {
+                if (i >= 6){
+                    break;
+                }
+                JSONObject data = JSON.parseObject(jsonObject.toString());
+                BiliHotData biliHotData = new BiliHotData();
+                biliHotData.setAuthor(data.getString("author"));
+                biliHotData.setCover(data.getString("cover"));
+                biliHotData.setDesc(data.getString("desc"));
+                biliHotData.setTitle(data.getString("title"));
+                biliHotData.setUrl(data.getString("url"));
+                biliHotDataList.add(biliHotData);
+                i++;
+            }
+        }
+        return JSON.toJSONString(BiliHotData.packageBiliHotMessage(biliHotDataList));
     }
 
 }
