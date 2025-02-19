@@ -52,9 +52,7 @@ public class ChatController {
         // 沉睡线程，降低回复速度
         Thread.sleep(randomNumber);
         String jsonString = null;
-        if ("你好".equals(message)) {
-            jsonString = "你好！";
-        } else if (message.contains("介绍-")) {
+        if (message.contains("介绍-")) {
             jsonString = messageInterface.searchFriend(message);
         } else if (message.contains("添加-")) {
             messageInterface.addFriend(message);
