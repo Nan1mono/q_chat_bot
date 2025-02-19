@@ -93,7 +93,7 @@ public class Friend extends BaseEntity {
 
     public static GroupMessage packageFriendMsg(List<Friend> friendList) {
         GroupMessage groupMessage = new GroupMessage();
-        groupMessage.setGroup_id("953136144");
+        groupMessage.setGroup_id("1027482224");
         Message msg = new Message();
         msg.setType("text");
         MessageData messageData = new MessageData();
@@ -101,6 +101,11 @@ public class Friend extends BaseEntity {
         for (Friend friend : friendList){
             result.append(packageFriendText(friend));
         }
+        int length = result.length();
+        if (length > 300){
+            result.append(result, 0, 50);
+        }
+        result.append("\n！由于消息限制只能显示50字符！");
         messageData.setText(result.toString());
         msg.setData(messageData);
         groupMessage.setMessage(Lists.newArrayList(msg));

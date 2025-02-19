@@ -1,10 +1,6 @@
 package com.project.template.module.chat.controller;
 
-import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.project.template.module.chat.pojo.entity.Friend;
-import com.project.template.module.chat.pojo.vo.GroupMessage;
-import com.project.template.module.chat.serivice.FriendService;
 import com.project.template.module.chat.serivice.MessageInterface;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -18,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Slf4j
 @RestController
@@ -41,6 +35,7 @@ public class ChatController {
 
     @PostMapping("/receive")
     public void receive(@RequestBody JSONObject jsonObject) throws InterruptedException {
+
         String message = null;
         try {
             message = jsonObject.get("raw_message").toString();
@@ -48,7 +43,7 @@ public class ChatController {
             return;
         }
         log.info("receive message: {}", message);
-        if (!message.contains("[CQ:at,qq=3938875617]")) {
+        if (!message.contains("[CQ:at,qq=3932152293]")) {
             return;
         }
         HttpHeaders headers = new HttpHeaders();
@@ -57,20 +52,17 @@ public class ChatController {
         // 沉睡线程，降低回复速度
         Thread.sleep(randomNumber);
         String jsonString = null;
-        if (message.contains("介绍-")) {
+        if ("你好".equals(message)) {
+            jsonString = "你好！";
+        } else if (message.contains("介绍-")) {
             jsonString = messageInterface.searchFriend(message);
         } else if (message.contains("添加-")) {
             messageInterface.addFriend(message);
-        } else if (message.contains("哔哩哔哩热搜")){
+        } else if (message.contains("哔哩哔哩热搜")) {
 //            jsonString = messageInterface.bilibiliHot();
             jsonString = "受账号风控影响，该功能已禁用";
         }
         if (StringUtils.isNotBlank(jsonString)) {
-            int length = jsonString.length();
-            if (length > 50){
-                jsonString = jsonString.substring(0, 50);
-            }
-            jsonString += "\n！由于消息限制只能显示50字符！";
             HttpEntity<String> formEntity = new HttpEntity<>(jsonString, headers);
             restTemplate.postForObject(URL, formEntity, String.class);
         }
