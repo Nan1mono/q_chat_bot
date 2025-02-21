@@ -1,7 +1,14 @@
 package com.project.template.module.chat.controller;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.google.common.collect.Lists;
+import com.project.template.ApiApplication;
+import com.project.template.module.chat.pojo.vo.GroupMessage;
+import com.project.template.module.chat.pojo.vo.Message;
+import com.project.template.module.chat.pojo.vo.MessageData;
 import com.project.template.module.chat.serivice.MessageInterface;
+import com.project.template.module.chat.serivice.impl.BaiduErnieImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +35,13 @@ public class ChatController {
 
     private final MessageInterface messageInterface;
 
+    private final BaiduErnieImpl baiduErnieImpl;
+
     @Autowired
-    public ChatController(MessageInterface messageInterface) {
+    public ChatController(MessageInterface messageInterface,
+                          BaiduErnieImpl baiduErnieImpl) {
         this.messageInterface = messageInterface;
+        this.baiduErnieImpl = baiduErnieImpl;
     }
 
     @PostMapping("/receive")
@@ -43,7 +54,7 @@ public class ChatController {
             return;
         }
         log.info("receive message: {}", message);
-        if (!message.contains("[CQ:at,qq=3932152293]")) {
+        if (!message.contains("[CQ:at,qq=2767089726]")) {
             return;
         }
         HttpHeaders headers = new HttpHeaders();
@@ -59,12 +70,18 @@ public class ChatController {
         } else if (message.contains("哔哩哔哩热搜")) {
 //            jsonString = messageInterface.bilibiliHot();
             jsonString = "受账号风控影响，该功能已禁用";
+        } else if (message.contains("ai-")) {
+           jsonString =  baiduErnieImpl.chat(message);
+        } else if (message.contains("关闭")){
+            jsonString = closeMessage();
         }
         if (StringUtils.isNotBlank(jsonString)) {
             HttpEntity<String> formEntity = new HttpEntity<>(jsonString, headers);
             restTemplate.postForObject(URL, formEntity, String.class);
         }
-
+        if (message.contains("关闭")){
+            ApiApplication.shutdown();
+        }
     }
 
     /**
@@ -79,5 +96,17 @@ public class ChatController {
     @RequestMapping("/friend")
     public static class FriendController {
 
+    }
+
+    public static String closeMessage(){
+        GroupMessage groupMessage = new GroupMessage();
+        groupMessage.setGroup_id("953136144");
+        Message message = new Message();
+        message.setType("text");
+        MessageData messageData = new MessageData();
+        messageData.setText("再见！");
+        message.setData(messageData);
+        groupMessage.setMessage(Lists.newArrayList(message));
+        return JSON.toJSONString(groupMessage);
     }
 }
