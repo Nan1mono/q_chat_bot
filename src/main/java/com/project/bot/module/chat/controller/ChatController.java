@@ -65,7 +65,9 @@ public class ChatController {
         if (message.contains("介绍-")) {
             response = groupMessageService.getFriendByName(jsonObject);
         } else if (message.contains("添加-")) {
-            groupMessageService.saveFriend(jsonObject);
+            response = groupMessageService.saveFriend(jsonObject);
+        } else if (message.contains("帮助-如何添加介绍")){
+            response = groupMessageService.helpSaveFriend(jsonObject);
         }
         if (ObjectUtils.isNotEmpty(response)) {
             HttpHeaders headers = new HttpHeaders();

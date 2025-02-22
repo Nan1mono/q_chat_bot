@@ -36,7 +36,27 @@ public class GroupMessageService implements QMessageInterface {
 
     @Override
     public QGroupMessage saveFriend(Object message) {
-        return null;
+        String regex = "添加-(.*)";
+        JSONObject jsonObject = JSON.parseObject(message.toString());
+        String rawMessage = jsonObject.getString(QUtils.RAW_MESSAGE);
+        String text = parsingCommand(rawMessage, regex);
+        String[] split = text.split(",");
+        if (friendService.save(split[0], split[1], split[2], split[3], split[4])) {
+            return buildQGroupMsg("添加成功").toGroup(QUtils.getGroupId(jsonObject));
+        }else {
+            return buildQGroupMsg("添加失败").toGroup(QUtils.getGroupId(jsonObject));
+        }
+    }
+
+    @Override
+    public QGroupMessage helpSaveFriend(Object message) {
+        return buildQGroupMsg("""
+                🫡
+                按照如下格式输入：
+                添加-简称,姓名,昵称1,昵称2,昵称3
+                即可添加信息捏
+                ❤️
+                """).toGroup(QUtils.getGroupId(JSON.parseObject(message.toString())));
     }
 
 }
