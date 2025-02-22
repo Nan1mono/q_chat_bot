@@ -11,8 +11,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>com.project.template</groupId>
-    <artifactId>template</artifactId>
+    <groupId>com.project.bot</groupId>
+    <artifactId>chat-bot</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <!-- 环境控制 -->
