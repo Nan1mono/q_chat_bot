@@ -1,6 +1,7 @@
 package com.project.bot.common.exception;
 
 import com.project.bot.common.result.Result;
+import com.project.bot.module.chat.core.exception.ParsingCommandException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -11,6 +12,7 @@ public class GlobalExceptionHandler {
 
     /**
      * 拦截所有java可产生异常并进行统一处理
+     *
      * @param e 捕获指定异常
      * @return Result<Void> 统一异常信息
      */
@@ -22,14 +24,21 @@ public class GlobalExceptionHandler {
 
     /**
      * 拦截所有自定义异常
+     *
      * @param tempBusinessException 自定义异常
      * @return Result<Void> 统一异常信息
      */
     @ExceptionHandler(TempBusinessException.class)
-    public Result<Void> error(TempBusinessException tempBusinessException){
+    public Result<Void> error(TempBusinessException tempBusinessException) {
         log.error(tempBusinessException.getMessage());
         Integer code = tempBusinessException.getCode();
         String message = tempBusinessException.getMessage();
         return Result.fail(code, message);
+    }
+
+    @ExceptionHandler(ParsingCommandException.class)
+    public Result<Void> error(ParsingCommandException exception) {
+        log.error("{}: {}", exception.getMessage(), exception.getLocalizedMessage());
+        return Result.fail(exception.getCode(), exception.getMessage());
     }
 }

@@ -3,7 +3,7 @@ package com.project.bot.module.chat.serivice.impl;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.google.common.collect.Lists;
-import com.project.bot.module.chat.pojo.bo.BaiduErnieMessage;
+import com.project.bot.module.chat.pojo.bo.BaiduErnieMessageBO;
 import com.project.bot.module.chat.serivice.AiChatInterface;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -38,8 +38,8 @@ public class BaiduErnieImpl implements AiChatInterface {
         }
         message = matcher.group(1);
         String url = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions_pro?access_token=%s";
-        BaiduErnieMessage.ErnieMessage ernieMessage = new BaiduErnieMessage.ErnieMessage().setRole("user").setContent(message);
-        BaiduErnieMessage baiduErnieMessage = new BaiduErnieMessage()
+        BaiduErnieMessageBO.ErnieMessage ernieMessage = new BaiduErnieMessageBO.ErnieMessage().setRole("user").setContent(message);
+        BaiduErnieMessageBO baiduErnieMessageBO = new BaiduErnieMessageBO()
                 .setTemperature(0.95)
                 .setTop_p(0.8)
                 .setPenalty_score(1.0)
@@ -53,13 +53,13 @@ public class BaiduErnieImpl implements AiChatInterface {
         restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
-        HttpEntity<BaiduErnieMessage> httpEntity = new HttpEntity<>(baiduErnieMessage, headers);
+        HttpEntity<BaiduErnieMessageBO> httpEntity = new HttpEntity<>(baiduErnieMessageBO, headers);
         JSONObject jsonObject = JSON.parseObject(restTemplate.postForObject(url, httpEntity, String.class));
         if (ObjectUtils.isEmpty(jsonObject)) {
             return null;
         }
         log.info("baidu ernie response: {}", jsonObject);
-        return JSON.toJSONString(BaiduErnieMessage.packageMessage(jsonObject.getString("result")));
+        return JSON.toJSONString(BaiduErnieMessageBO.packageMessage(jsonObject.getString("result")));
     }
 
     @Override

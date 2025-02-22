@@ -3,15 +3,16 @@ package com.project.bot.module.chat.controller;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.google.common.collect.Lists;
-import com.project.bot.ApiApplication;
-import com.project.bot.module.chat.pojo.vo.GroupMessage;
-import com.project.bot.module.chat.pojo.vo.Message;
-import com.project.bot.module.chat.pojo.vo.MessageData;
-import com.project.bot.module.chat.serivice.MessageInterface;
+import com.project.bot.common.util.qq.QUtils;
+import com.project.bot.module.chat.core.qq.impl.GroupMessageService;
+import com.project.bot.module.chat.pojo.vo.qq.QMessage;
+import com.project.bot.module.chat.pojo.vo.qq.QMessageData;
+import com.project.bot.module.chat.pojo.vo.qq.group.QGroupMessage;
 import com.project.bot.module.chat.serivice.impl.BaiduErnieImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,57 +32,48 @@ public class ChatController {
 
     private final Random random = new Random();
 
-    private static final String URL = "http://192.168.66.130:3000/send_group_msg";
+    @Value("${chat.napcat.client.group-url:you-client-url}")
+    private String clientGroupUrl;
 
-    private final MessageInterface messageInterface;
+    private final GroupMessageService groupMessageService;
 
     private final BaiduErnieImpl baiduErnieImpl;
 
     @Autowired
-    public ChatController(MessageInterface messageInterface,
+    public ChatController(GroupMessageService groupMessageService,
                           BaiduErnieImpl baiduErnieImpl) {
-        this.messageInterface = messageInterface;
+        this.groupMessageService = groupMessageService;
         this.baiduErnieImpl = baiduErnieImpl;
     }
 
     @PostMapping("/receive")
     public void receive(@RequestBody JSONObject jsonObject) throws InterruptedException {
-
-        String message = null;
+        String message;
         try {
             message = jsonObject.get("raw_message").toString();
         } catch (Exception e) {
             return;
         }
         log.info("receive message: {}", message);
-        if (!message.contains("[CQ:at,qq=2767089726]")) {
+        if (QUtils.isGroupAt(jsonObject)) {
             return;
         }
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("content-type", "application/json;charset=UTF-8");
         int randomNumber = random.nextInt(3001) + 2000;
         // 沉睡线程，降低回复速度
         Thread.sleep(randomNumber);
-        String jsonString = null;
+        QGroupMessage response = null;
         if (message.contains("介绍-")) {
-            jsonString = messageInterface.searchFriend(message);
+            response = groupMessageService.getFriendByName(jsonObject);
         } else if (message.contains("添加-")) {
-            messageInterface.addFriend(message);
-        } else if (message.contains("哔哩哔哩热搜")) {
-//            jsonString = messageInterface.bilibiliHot();
-            jsonString = "受账号风控影响，该功能已禁用";
-        } else if (message.contains("ai-")) {
-           jsonString =  baiduErnieImpl.chat(message);
-        } else if (message.contains("关闭")){
-            jsonString = closeMessage();
+            groupMessageService.saveFriend(jsonObject);
         }
-        if (StringUtils.isNotBlank(jsonString)) {
-            HttpEntity<String> formEntity = new HttpEntity<>(jsonString, headers);
-            restTemplate.postForObject(URL, formEntity, String.class);
+        if (ObjectUtils.isNotEmpty(response)) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("content-type", "application/json;charset=UTF-8");
+            HttpEntity<QGroupMessage> formEntity = new HttpEntity<>(response, headers);
+            restTemplate.postForObject(clientGroupUrl, formEntity, String.class);
         }
-        if (message.contains("关闭")){
-            ApiApplication.shutdown();
-        }
+
     }
 
     /**
@@ -99,14 +91,14 @@ public class ChatController {
     }
 
     public static String closeMessage(){
-        GroupMessage groupMessage = new GroupMessage();
-        groupMessage.setGroup_id("953136144");
-        Message message = new Message();
-        message.setType("text");
-        MessageData messageData = new MessageData();
-        messageData.setText("再见！");
-        message.setData(messageData);
-        groupMessage.setMessage(Lists.newArrayList(message));
-        return JSON.toJSONString(groupMessage);
+        QGroupMessage QGroupMessage = new QGroupMessage();
+        QGroupMessage.setGroup_id("953136144");
+        QMessage QMessage = new QMessage();
+        QMessage.setType("text");
+        QMessageData QMessageData = new QMessageData();
+        QMessageData.setText("再见！");
+        QMessage.setData(QMessageData);
+        QGroupMessage.setQMessage(Lists.newArrayList(QMessage));
+        return JSON.toJSONString(QGroupMessage);
     }
 }

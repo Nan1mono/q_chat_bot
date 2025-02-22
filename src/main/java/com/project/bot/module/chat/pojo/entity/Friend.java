@@ -4,21 +4,20 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.google.common.collect.Lists;
 import com.project.bot.module.base.entity.BaseEntity;
-import com.project.bot.module.chat.pojo.vo.GroupMessage;
-import com.project.bot.module.chat.pojo.vo.Message;
-import com.project.bot.module.chat.pojo.vo.MessageData;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
 
 import java.util.List;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author lee
@@ -27,6 +26,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
+@Accessors(chain = true)
 @TableName("friend")
 @Schema(name = "Friend", description = "")
 public class Friend extends BaseEntity {
@@ -90,33 +90,23 @@ public class Friend extends BaseEntity {
     @Schema(description = "状态 1启用 0停用")
     private Integer status;
 
-    public static GroupMessage packageFriendMsg(List<Friend> friendList) {
-        GroupMessage groupMessage = new GroupMessage();
-        groupMessage.setGroup_id("1027482224");
-        Message msg = new Message();
-        msg.setType("text");
-        MessageData messageData = new MessageData();
-        StringBuilder result = new StringBuilder();
-        for (Friend friend : friendList){
-            result.append(packageFriendText(friend));
+    public static String convert2Msg(List<Friend> friendList) {
+        if (CollectionUtils.isEmpty(friendList)) {
+            return "❌没有记录请先添加哦";
         }
-        int length = result.length();
-        if (length > 300){
-            result.append(result, 0, 50);
+        List<String> list = Lists.newArrayList();
+        for (Friend friend : friendList) {
+            list.add(convert2Msg(friend));
         }
-        result.append("\n！由于消息限制只能显示50字符！");
-        messageData.setText(result.toString());
-        msg.setData(messageData);
-        groupMessage.setMessage(Lists.newArrayList(msg));
-        return groupMessage;
+        return String.join("\r\n", list);
     }
 
-    private static String packageFriendText(Friend friend) {
+    public static String convert2Msg(Friend friend) {
         return String.format("""
-                姓名：%s
-                简拼：%s
-                别名：%s,%s,%s
-                """, getOrDefault(friend.getFullName()), getOrDefault(friend.getSimpleSpelling()),
+                        姓名：%s
+                        简拼：%s
+                        别名：%s,%s,%s
+                        """, getOrDefault(friend.getFullName()), getOrDefault(friend.getSimpleSpelling()),
                 getOrDefault(friend.getNickName1()), getOrDefault(friend.getNickName2()), getOrDefault(friend.getNickName3()));
     }
 }
