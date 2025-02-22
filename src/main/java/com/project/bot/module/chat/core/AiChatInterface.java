@@ -1,4 +1,4 @@
-package com.project.bot.module.chat.serivice;
+package com.project.bot.module.chat.core;
 
 public interface AiChatInterface {
 

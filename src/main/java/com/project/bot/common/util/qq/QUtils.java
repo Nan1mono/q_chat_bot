@@ -10,7 +10,7 @@ public class QUtils {
 
     public static final String GROUP_ID = "group_id";
 
-    private static final String AT_MESSAGE = "[CQ:at,qq=%s]";
+    public static final String AT_MESSAGE = "[CQ:at,qq=%s]";
 
     private QUtils() {
     }

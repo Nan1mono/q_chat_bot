@@ -1,10 +1,10 @@
-package com.project.bot.module.chat.serivice.impl;
+package com.project.bot.module.chat.core.ernie;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.google.common.collect.Lists;
+import com.project.bot.module.chat.core.AiChatInterface;
 import com.project.bot.module.chat.pojo.bo.BaiduErnieMessageBO;
-import com.project.bot.module.chat.serivice.AiChatInterface;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,30 +13,20 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 @Slf4j
 @Component
-public class BaiduErnieImpl implements AiChatInterface {
+public class BaiduErnieService implements AiChatInterface {
 
     private RestTemplate restTemplate = new RestTemplate();
 
-    @Value("${baidu.chat.api-key:replace-your-api-key}")
+    @Value("${chat.baidu.api-key:replace-your-api-key}")
     private String apiKey;
 
-    @Value("${baidu.chat.secret-key:replace-your-secret-key}")
+    @Value("${chat.baidu.secret-key:replace-your-secret-key}")
     private String secretKey;
 
     @Override
     public String chat(String message) {
-        String regex = "ai-(.*)";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(message);
-        if (!matcher.find()) {
-            return null;
-        }
-        message = matcher.group(1);
         String url = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions_pro?access_token=%s";
         BaiduErnieMessageBO.ErnieMessage ernieMessage = new BaiduErnieMessageBO.ErnieMessage().setRole("user").setContent(message);
         BaiduErnieMessageBO baiduErnieMessageBO = new BaiduErnieMessageBO()
@@ -59,7 +49,7 @@ public class BaiduErnieImpl implements AiChatInterface {
             return null;
         }
         log.info("baidu ernie response: {}", jsonObject);
-        return JSON.toJSONString(BaiduErnieMessageBO.packageMessage(jsonObject.getString("result")));
+        return jsonObject.getString("result");
     }
 
     @Override
@@ -74,5 +64,6 @@ public class BaiduErnieImpl implements AiChatInterface {
         }
         return jsonObject.getString("access_token");
     }
+
 
 }

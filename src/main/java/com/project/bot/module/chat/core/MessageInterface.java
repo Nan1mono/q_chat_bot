@@ -24,4 +24,6 @@ public interface MessageInterface {
 
     BotMessage helpSaveFriend(Object message);
 
+    BotMessage chatWithAi(Object message);
+
 }

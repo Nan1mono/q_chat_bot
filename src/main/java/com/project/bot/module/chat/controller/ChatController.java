@@ -4,11 +4,11 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.google.common.collect.Lists;
 import com.project.bot.common.util.qq.QUtils;
+import com.project.bot.module.chat.core.ernie.BaiduErnieService;
 import com.project.bot.module.chat.core.qq.impl.GroupMessageService;
 import com.project.bot.module.chat.pojo.vo.qq.QMessage;
 import com.project.bot.module.chat.pojo.vo.qq.QMessageData;
 import com.project.bot.module.chat.pojo.vo.qq.group.QGroupMessage;
-import com.project.bot.module.chat.serivice.impl.BaiduErnieImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,13 +37,13 @@ public class ChatController {
 
     private final GroupMessageService groupMessageService;
 
-    private final BaiduErnieImpl baiduErnieImpl;
+    private final BaiduErnieService baiduErnieService;
 
     @Autowired
     public ChatController(GroupMessageService groupMessageService,
-                          BaiduErnieImpl baiduErnieImpl) {
+                          BaiduErnieService baiduErnieService) {
         this.groupMessageService = groupMessageService;
-        this.baiduErnieImpl = baiduErnieImpl;
+        this.baiduErnieService = baiduErnieService;
     }
 
     @PostMapping("/receive")
@@ -68,6 +68,8 @@ public class ChatController {
             response = groupMessageService.saveFriend(jsonObject);
         } else if (message.contains("帮助-如何添加介绍")){
             response = groupMessageService.helpSaveFriend(jsonObject);
+        } else {
+            response = groupMessageService.chatWithAi(jsonObject);
         }
         if (ObjectUtils.isNotEmpty(response)) {
             HttpHeaders headers = new HttpHeaders();
