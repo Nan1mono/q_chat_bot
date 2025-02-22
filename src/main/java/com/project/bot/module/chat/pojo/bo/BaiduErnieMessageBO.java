@@ -45,7 +45,7 @@ public class BaiduErnieMessageBO {
         QMessageData QMessageData = new QMessageData();
         QMessageData.setText(response);
         QMessage.setData(QMessageData);
-        QGroupMessage.setQMessage(Lists.newArrayList(QMessage));
+        QGroupMessage.setMessage(Lists.newArrayList(QMessage));
         return QGroupMessage;
     }
 

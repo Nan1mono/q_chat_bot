@@ -55,7 +55,7 @@ public class ChatController {
             return;
         }
         log.info("receive message: {}", message);
-        if (QUtils.isGroupAt(jsonObject)) {
+        if (!QUtils.isGroupAt(jsonObject)) {
             return;
         }
         int randomNumber = random.nextInt(3001) + 2000;
@@ -98,7 +98,7 @@ public class ChatController {
         QMessageData QMessageData = new QMessageData();
         QMessageData.setText("再见！");
         QMessage.setData(QMessageData);
-        QGroupMessage.setQMessage(Lists.newArrayList(QMessage));
+        QGroupMessage.setMessage(Lists.newArrayList(QMessage));
         return JSON.toJSONString(QGroupMessage);
     }
 }

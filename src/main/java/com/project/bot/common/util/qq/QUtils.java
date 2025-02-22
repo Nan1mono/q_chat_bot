@@ -6,17 +6,21 @@ public class QUtils {
 
     public static final String RAW_MESSAGE = "raw_message";
 
+    public static final String SELF_ID = "self_id";
+
+    public static final String GROUP_ID = "group_id";
+
     private static final String AT_MESSAGE = "[CQ:at,qq=%s]";
 
     private QUtils() {
     }
 
     public static String getGroupId(JSONObject jsonObject) {
-        return null;
+        return jsonObject.getString(GROUP_ID);
     }
 
     public static String getQid(JSONObject jsonObject) {
-        return null;
+        return jsonObject.getString(SELF_ID);
     }
 
     /**
@@ -29,7 +33,12 @@ public class QUtils {
         if (jsonObject == null){
             return false;
         }
-        String string = jsonObject.getString(RAW_MESSAGE);
+        String string;
+        try {
+            string = jsonObject.getString(RAW_MESSAGE);
+        } catch (Exception e) {
+            string = "";
+        }
         return string.startsWith(String.format(AT_MESSAGE, getQid(jsonObject)));
     }
 

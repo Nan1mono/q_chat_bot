@@ -22,7 +22,7 @@ public interface QMessageInterface extends MessageInterface {
         QMessageData QMessageData = new QMessageData();
         QMessageData.setText(message);
         msg.setData(QMessageData);
-        QGroupMessage.setQMessage(Lists.newArrayList(msg));
+        QGroupMessage.setMessage(Lists.newArrayList(msg));
         return QGroupMessage;
     }
 

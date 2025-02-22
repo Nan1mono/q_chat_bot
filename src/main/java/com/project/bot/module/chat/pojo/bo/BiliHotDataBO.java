@@ -44,7 +44,7 @@ public class BiliHotDataBO extends BaseEntity {
         }
         QMessageData.setText(builder.toString());
         QMessage.setData(QMessageData);
-        QGroupMessage.setQMessage(Lists.newArrayList(QMessage));
+        QGroupMessage.setMessage(Lists.newArrayList(QMessage));
         return QGroupMessage;
     }
 
