@@ -27,6 +27,10 @@
         <commons-collections4.version>4.4</commons-collections4.version>
         <alibaba-easyexcel.version>4.0.3</alibaba-easyexcel.version>
         <jjwt.version>4.4.0</jjwt.version>
+        <springdoc.version>2.8.5</springdoc.version>
+        <google-guava.version>32.1.2-jre</google-guava.version>
+        <codehaus-janino.version>3.1.11</codehaus-janino.version>
+        <telegrambots.version>6.9.7.1</telegrambots.version>
     </properties>
 
     <dependencies>
@@ -141,25 +145,25 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.8.5</version>
+            <version>${springdoc.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>32.1.2-jre</version>
+            <version>${google-guava.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>
-            <version>3.1.11</version>
+            <version>${codehaus-janino.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp</artifactId>
-            <version>4.12.0</version>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegrambots</artifactId>
+            <version>${telegrambots.version}</version>
         </dependency>
     </dependencies>
 

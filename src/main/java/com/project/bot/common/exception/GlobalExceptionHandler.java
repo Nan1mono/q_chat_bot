@@ -1,6 +1,8 @@
 package com.project.bot.common.exception;
 
 import com.project.bot.common.result.Result;
+import com.project.bot.common.result.ResultCodeEnum;
+import com.project.bot.module.chat.core.exception.ChatCoreException;
 import com.project.bot.module.chat.core.exception.ParsingCommandException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -41,4 +43,11 @@ public class GlobalExceptionHandler {
         log.error("{}: {}", exception.getMessage(), exception.getLocalizedMessage());
         return Result.fail(exception.getCode(), exception.getMessage());
     }
+
+    @ExceptionHandler(ChatCoreException.class)
+    public Result<Void> error(ChatCoreException exception) {
+        log.error("{}", exception.getLocalizedMessage());
+        return Result.fail(ResultCodeEnum.FAIL.getCode(), exception.getMessage());
+    }
+
 }
