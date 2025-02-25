@@ -2,26 +2,22 @@ package com.project.bot.module.chat.controller;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
-import com.google.common.collect.Lists;
 import com.project.bot.common.util.qq.QUtils;
-import com.project.bot.module.chat.core.ernie.BaiduErnieService;
 import com.project.bot.module.chat.core.qq.impl.GroupMessageService;
-import com.project.bot.module.chat.pojo.vo.qq.QMessage;
-import com.project.bot.module.chat.pojo.vo.qq.QMessageData;
 import com.project.bot.module.chat.pojo.vo.qq.group.QGroupMessage;
+import com.project.bot.module.hs.core.sender.HsWebSocketSender;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Random;
+
+import static com.project.bot.module.hs.HomeRestTemplate.ACCESS_TOKEN;
 
 @Slf4j
 @RestController
@@ -37,13 +33,13 @@ public class ChatController {
 
     private final GroupMessageService groupMessageService;
 
-    private final BaiduErnieService baiduErnieService;
+    private final HsWebSocketSender hsWebSocketSender;
 
     @Autowired
     public ChatController(GroupMessageService groupMessageService,
-                          BaiduErnieService baiduErnieService) {
+                          HsWebSocketSender hsWebSocketSender) {
         this.groupMessageService = groupMessageService;
-        this.baiduErnieService = baiduErnieService;
+        this.hsWebSocketSender = hsWebSocketSender;
     }
 
     @PostMapping("/receive")
@@ -80,29 +76,17 @@ public class ChatController {
 
     }
 
-    /**
-     * <p>
-     *  前端控制器
-     * </p>
-     *
-     * @author lee
-     * @since 2025-02-19
-     */
-    @RestController
-    @RequestMapping("/friend")
-    public static class FriendController {
-
+    @GetMapping("/socket/test")
+    public void socketTest(){
+        hsWebSocketSender.sendToWebSocket(sendAuthMessage());
     }
 
-    public static String closeMessage(){
-        QGroupMessage QGroupMessage = new QGroupMessage();
-        QGroupMessage.setGroup_id("953136144");
-        QMessage QMessage = new QMessage();
-        QMessage.setType("text");
-        QMessageData QMessageData = new QMessageData();
-        QMessageData.setText("再见！");
-        QMessage.setData(QMessageData);
-        QGroupMessage.setMessage(Lists.newArrayList(QMessage));
-        return JSON.toJSONString(QGroupMessage);
+
+    private static String sendAuthMessage() {
+        JSONObject authMessage = new JSONObject();
+        authMessage.put("type", "auth");
+        authMessage.put("access_token", ACCESS_TOKEN);
+        return JSON.toJSONString(authMessage);
     }
+
 }
