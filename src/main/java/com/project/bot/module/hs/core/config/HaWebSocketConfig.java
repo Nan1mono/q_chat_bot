@@ -1,6 +1,7 @@
 package com.project.bot.module.hs.core.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.channel.DirectChannel;
@@ -17,7 +18,9 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 @EnableIntegration
 public class HaWebSocketConfig {
 
-    public static final String HA_WS_URL = "ws://192.168.66.130:8123/api/websocket";
+
+    @Value("${home-assistant.socket-url}")
+    private String socketUrl = "ws://192.168.66.130:8123/api/websocket";
 
     // 初始化webSocket客户端
     @Bean
@@ -49,7 +52,7 @@ public class HaWebSocketConfig {
     // 简历webSocket链接容器
     @Bean
     public ClientWebSocketContainer webSocketContainer(WebSocketClient webSocketClient) {
-        ClientWebSocketContainer container = new ClientWebSocketContainer(webSocketClient, HA_WS_URL);
+        ClientWebSocketContainer container = new ClientWebSocketContainer(webSocketClient, socketUrl);
         container.setConnectionTimeout(5000); // 连接超时 5 秒
         container.setAutoStartup(true); // 自动启动
         container.start();

@@ -18,12 +18,8 @@ import java.util.List;
 @Component
 public class HaSocketTemplate {
 
-    @Value("${home-assistant.socket-url}")
-    private String socketUrl = "ws://192.168.66.130:8123/api/websocket";
-
     @Value("${home-assistant.token}")
-    private String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkM2MzZWMwZmI3OWE0ZjI5YTQ5MWEzNDcwZDBjM2YxOCIsImlhdCI6MTc0MDM4MDU3MiwiZXhwIjoyMDU1NzQwNTcyfQ.1yRdbZK1PFCCSURerHo45MqIbmatQSFTWZZ3_i9EyXs";
-
+    private String token;
 
     private final HaWebSocketSender haWebSocketSender;
 
@@ -39,13 +35,12 @@ public class HaSocketTemplate {
     public void auth() {
         String message = sendAuthMessage(token);
         log.info("auth message: {}", message);
-//        haWebSocketSender.sendToWebSocket(message, "", 0L, "");
-        haWebSocketSender.sendToWebSocket(message);
+        haWebSocketSender.sendToWebSocket(message, null, null, null);
     }
 
-//    public void searchDevice(String sessionMethod, Long homeAssistantUserId, String chatId) {
-//        haWebSocketSender.sendToWebSocket(getDeviceList(String.valueOf(System.currentTimeMillis())), sessionMethod, homeAssistantUserId, chatId);
-//    }
+    public void searchDevice(String sessionMethod, Long homeAssistantUserId, String chatId) {
+        haWebSocketSender.sendToWebSocket(JSON.toJSONString(getDeviceList()), sessionMethod, homeAssistantUserId, chatId);
+    }
 
     public String filterDeviceListFromTelegram(String message, Long telegramId) {
         HomeAssistantUser homeAssistantUser = homeAssistantUserService.getByTelegramId(telegramId);
@@ -77,7 +72,6 @@ public class HaSocketTemplate {
 
     protected static String sendAuthMessage(String token) {
         JSONObject message = new JSONObject();
-        message.put("id", 1);
         message.put("type", "auth");
         message.put("access_token", token);
         return JSON.toJSONString(message);
@@ -91,12 +85,11 @@ public class HaSocketTemplate {
         return JSON.toJSONString(message);
     }
 
-    protected static String getDeviceList(String messageId) {
-        JSONObject message = new JSONObject();
-        message.put("id", messageId);
-        message.put("type", "config/device_registry/list");
-        return JSON.toJSONString(message);
+    protected static JSONObject getDeviceList() {
+        JSONObject subscribeMessage = new JSONObject();
+        subscribeMessage.put("id", System.currentTimeMillis());
+        subscribeMessage.put("type", "config/device_registry/list");
+        return subscribeMessage;
     }
-
 
 }

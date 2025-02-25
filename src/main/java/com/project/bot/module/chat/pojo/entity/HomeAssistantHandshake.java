@@ -30,8 +30,8 @@ public class HomeAssistantHandshake extends BaseEntity {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @TableField("session_id")
-    private String sessionId;
+    @TableField("payload_id")
+    private String payloadId;
 
     @TableField("chat_id")
     private String chatId;

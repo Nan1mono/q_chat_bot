@@ -13,6 +13,6 @@ import com.project.bot.module.chat.pojo.entity.HomeAssistantHandshake;
  */
 public interface HomeAssistantHandshakeService extends IService<HomeAssistantHandshake> {
 
-    HomeAssistantHandshake getBySessionId(String sessionId);
+    HomeAssistantHandshake getByPayloadId(String payload);
 
 }

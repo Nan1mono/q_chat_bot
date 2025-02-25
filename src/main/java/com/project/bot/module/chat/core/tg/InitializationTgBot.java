@@ -63,8 +63,6 @@ public class InitializationTgBot {
                             homeAssistantHandshakeService
                     );
             botsApi.registerBot(nanimonoBot);
-            // 预认证
-            haSocketTemplate.auth();
         } catch (TelegramApiException e) {
             throw new ChatCoreException(e);
         }

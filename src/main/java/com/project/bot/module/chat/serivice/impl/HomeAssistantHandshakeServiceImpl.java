@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class HomeAssistantHandshakeServiceImpl extends ServiceImpl<HomeAssistantHandshakeMapper, HomeAssistantHandshake> implements HomeAssistantHandshakeService {
 
     @Override
-    public HomeAssistantHandshake getBySessionId(String sessionId) {
-        return this.lambdaQuery().eq(HomeAssistantHandshake::getSessionId, sessionId).one();
+    public HomeAssistantHandshake getByPayloadId(String payloadId) {
+        return this.lambdaQuery().eq(HomeAssistantHandshake::getPayloadId, payloadId).one();
     }
 }

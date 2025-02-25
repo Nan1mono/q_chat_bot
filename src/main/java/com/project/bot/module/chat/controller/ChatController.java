@@ -79,12 +79,7 @@ public class ChatController {
 //        haWebSocketSender.sendToWebSocket(JSON.toJSONString(getDeviceList()), null, null, null);
     }
 
-    protected JSONObject sendAuthMessage() {
-        JSONObject authMessage = new JSONObject();
-        authMessage.put("type", "auth");
-        authMessage.put("access_token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkM2MzZWMwZmI3OWE0ZjI5YTQ5MWEzNDcwZDBjM2YxOCIsImlhdCI6MTc0MDM4MDU3MiwiZXhwIjoyMDU1NzQwNTcyfQ.1yRdbZK1PFCCSURerHo45MqIbmatQSFTWZZ3_i9EyXs");
-        return authMessage;
-    }
+
 
     protected JSONObject subscribeToStates() {
         JSONObject subscribeMessage = new JSONObject();
