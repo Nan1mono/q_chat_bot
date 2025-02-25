@@ -15,7 +15,7 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 @Slf4j
 @Configuration
 @EnableIntegration
-public class HsWebSocketConfig {
+public class HaWebSocketConfig {
 
     public static final String HA_WS_URL = "ws://192.168.66.130:8123/api/websocket";
 

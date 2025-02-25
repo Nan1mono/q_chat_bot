@@ -1,11 +1,10 @@
 package com.project.bot.module.chat.controller;
 
-import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.project.bot.common.util.qq.QUtils;
 import com.project.bot.module.chat.core.qq.impl.GroupMessageService;
 import com.project.bot.module.chat.pojo.vo.qq.group.QGroupMessage;
-import com.project.bot.module.hs.core.sender.HsWebSocketSender;
+import com.project.bot.module.hs.core.sender.HaWebSocketSender;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Random;
-
-import static com.project.bot.module.hs.HomeRestTemplate.ACCESS_TOKEN;
 
 @Slf4j
 @RestController
@@ -33,13 +30,13 @@ public class ChatController {
 
     private final GroupMessageService groupMessageService;
 
-    private final HsWebSocketSender hsWebSocketSender;
+    private final HaWebSocketSender haWebSocketSender;
 
     @Autowired
     public ChatController(GroupMessageService groupMessageService,
-                          HsWebSocketSender hsWebSocketSender) {
+                          HaWebSocketSender haWebSocketSender) {
         this.groupMessageService = groupMessageService;
-        this.hsWebSocketSender = hsWebSocketSender;
+        this.haWebSocketSender = haWebSocketSender;
     }
 
     @PostMapping("/receive")
@@ -62,7 +59,7 @@ public class ChatController {
             response = groupMessageService.getFriendByName(jsonObject);
         } else if (message.contains("添加-")) {
             response = groupMessageService.saveFriend(jsonObject);
-        } else if (message.contains("帮助-如何添加介绍")){
+        } else if (message.contains("帮助-如何添加介绍")) {
             response = groupMessageService.helpSaveFriend(jsonObject);
         } else {
             response = groupMessageService.chatWithAi(jsonObject);
@@ -77,16 +74,31 @@ public class ChatController {
     }
 
     @GetMapping("/socket/test")
-    public void socketTest(){
-        hsWebSocketSender.sendToWebSocket(sendAuthMessage());
+    public void socketTest() {
+//        haWebSocketSender.sendToWebSocket(JSON.toJSONString(sendAuthMessage()), null, null, null);
+//        haWebSocketSender.sendToWebSocket(JSON.toJSONString(getDeviceList()), null, null, null);
     }
 
-
-    private static String sendAuthMessage() {
+    protected JSONObject sendAuthMessage() {
         JSONObject authMessage = new JSONObject();
         authMessage.put("type", "auth");
-        authMessage.put("access_token", ACCESS_TOKEN);
-        return JSON.toJSONString(authMessage);
+        authMessage.put("access_token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkM2MzZWMwZmI3OWE0ZjI5YTQ5MWEzNDcwZDBjM2YxOCIsImlhdCI6MTc0MDM4MDU3MiwiZXhwIjoyMDU1NzQwNTcyfQ.1yRdbZK1PFCCSURerHo45MqIbmatQSFTWZZ3_i9EyXs");
+        return authMessage;
     }
+
+    protected JSONObject subscribeToStates() {
+        JSONObject subscribeMessage = new JSONObject();
+        subscribeMessage.put("type", "subscribe_events");
+        subscribeMessage.put("event_type", "state_changed");
+        return subscribeMessage;
+    }
+
+    protected JSONObject getDeviceList() {
+        JSONObject subscribeMessage = new JSONObject();
+        subscribeMessage.put("id", 1);
+        subscribeMessage.put("type", "config/device_registry/list");
+        return subscribeMessage;
+    }
+
 
 }

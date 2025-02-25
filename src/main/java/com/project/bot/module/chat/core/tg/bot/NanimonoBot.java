@@ -2,7 +2,13 @@ package com.project.bot.module.chat.core.tg.bot;
 
 import com.project.bot.module.chat.core.ernie.BaiduErnieService;
 import com.project.bot.module.chat.core.exception.ChatCoreException;
+import com.project.bot.module.chat.pojo.entity.HomeAssistantUser;
+import com.project.bot.module.chat.serivice.HomeAssistantHandshakeService;
+import com.project.bot.module.chat.serivice.HomeAssistantUserService;
+import com.project.bot.module.hs.HaSocketTemplate;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -17,16 +23,27 @@ public class NanimonoBot extends TelegramLongPollingBot {
 
     private BaiduErnieService baiduErnieService;
 
+    private HaSocketTemplate haSocketTemplate;
+
+    private HomeAssistantUserService homeAssistantUserService;
+
+    private HomeAssistantHandshakeService homeAssistantHandshakeService;
+
     public NanimonoBot(DefaultBotOptions options, String botToken, String botName) {
         super(options, botToken);
         this.botName = botName;
     }
 
-    public NanimonoBot setService(BaiduErnieService baiduErnieService) {
+    public NanimonoBot setService(BaiduErnieService baiduErnieService,
+                                  HaSocketTemplate haSocketTemplate,
+                                  HomeAssistantUserService homeAssistantUserService,
+                                  HomeAssistantHandshakeService homeAssistantHandshakeService) {
         this.baiduErnieService = baiduErnieService;
+        this.haSocketTemplate = haSocketTemplate;
+        this.homeAssistantUserService = homeAssistantUserService;
+        this.homeAssistantHandshakeService = homeAssistantHandshakeService;
         return this;
     }
-
 
 
     @Override
@@ -39,14 +56,20 @@ public class NanimonoBot extends TelegramLongPollingBot {
             message.setChatId(chatId);
             User fromUser = update.getMessage().getFrom();
             String response = "";
-            if (fromUser.getId() == 6871508569L){
-                response = "朱 玉坤，您好！我是您的智能家居控制机器人";
-            }else {
+            // 查询是否配置了指定用户
+            HomeAssistantUser homeAssistantUser = homeAssistantUserService.getByTelegramId(fromUser.getId());
+            if (ObjectUtils.isNotEmpty(homeAssistantUser)) {
+                // 发送webSocket请求，后续结果将从haSocketListener中接受并完成回调
+                haSocketTemplate.auth();
+            } else {
                 response = baiduErnieService.chat(messageText);
             }
             message.setText(response);
             try {
-                execute(message);
+                if (StringUtils.isNotBlank(response)) {
+                    message.setText(response);
+                    execute(message);
+                }
             } catch (TelegramApiException e) {
                 throw new ChatCoreException(e);
             }
@@ -57,4 +80,18 @@ public class NanimonoBot extends TelegramLongPollingBot {
     public String getBotUsername() {
         return this.botName;
     }
+
+    public void sendMessageToChat(String message, String chatId) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(chatId);
+        sendMessage.setText(message);
+        try {
+            if (StringUtils.isNotBlank(message)) {
+                execute(sendMessage);
+            }
+        } catch (TelegramApiException e) {
+            throw new ChatCoreException(e);
+        }
+    }
+
 }
