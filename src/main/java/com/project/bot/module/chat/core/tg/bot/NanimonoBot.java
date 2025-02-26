@@ -3,7 +3,6 @@ package com.project.bot.module.chat.core.tg.bot;
 import com.project.bot.module.chat.core.ernie.BaiduErnieService;
 import com.project.bot.module.chat.core.exception.ChatCoreException;
 import com.project.bot.module.chat.pojo.entity.HomeAssistantUser;
-import com.project.bot.module.chat.serivice.HomeAssistantHandshakeService;
 import com.project.bot.module.chat.serivice.HomeAssistantUserService;
 import com.project.bot.module.hs.HaSocketTemplate;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +26,6 @@ public class NanimonoBot extends TelegramLongPollingBot {
 
     private HomeAssistantUserService homeAssistantUserService;
 
-    private HomeAssistantHandshakeService homeAssistantHandshakeService;
-
     public NanimonoBot(DefaultBotOptions options, String botToken, String botName) {
         super(options, botToken);
         this.botName = botName;
@@ -36,12 +33,10 @@ public class NanimonoBot extends TelegramLongPollingBot {
 
     public NanimonoBot setService(BaiduErnieService baiduErnieService,
                                   HaSocketTemplate haSocketTemplate,
-                                  HomeAssistantUserService homeAssistantUserService,
-                                  HomeAssistantHandshakeService homeAssistantHandshakeService) {
+                                  HomeAssistantUserService homeAssistantUserService) {
         this.baiduErnieService = baiduErnieService;
         this.haSocketTemplate = haSocketTemplate;
         this.homeAssistantUserService = homeAssistantUserService;
-        this.homeAssistantHandshakeService = homeAssistantHandshakeService;
         return this;
     }
 

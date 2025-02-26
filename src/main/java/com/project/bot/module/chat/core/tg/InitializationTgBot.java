@@ -3,7 +3,6 @@ package com.project.bot.module.chat.core.tg;
 import com.project.bot.module.chat.core.ernie.BaiduErnieService;
 import com.project.bot.module.chat.core.exception.ChatCoreException;
 import com.project.bot.module.chat.core.tg.bot.NanimonoBot;
-import com.project.bot.module.chat.serivice.HomeAssistantHandshakeService;
 import com.project.bot.module.chat.serivice.HomeAssistantUserService;
 import com.project.bot.module.hs.HaSocketTemplate;
 import jakarta.annotation.PostConstruct;
@@ -24,8 +23,6 @@ public class InitializationTgBot {
 
     private final HomeAssistantUserService homeAssistantUserService;
 
-    private final HomeAssistantHandshakeService homeAssistantHandshakeService;
-
     @Value("${chat.telegram.bot-token:your-tg-bot-token}")
     private String botToken;
 
@@ -37,12 +34,10 @@ public class InitializationTgBot {
     @Autowired
     public InitializationTgBot(BaiduErnieService baiduErnieService,
                                HaSocketTemplate haSocketTemplate,
-                               HomeAssistantUserService homeAssistantUserService,
-                               HomeAssistantHandshakeService homeAssistantHandshakeService) {
+                               HomeAssistantUserService homeAssistantUserService) {
         this.baiduErnieService = baiduErnieService;
         this.haSocketTemplate = haSocketTemplate;
         this.homeAssistantUserService = homeAssistantUserService;
-        this.homeAssistantHandshakeService = homeAssistantHandshakeService;
     }
 
 
@@ -59,8 +54,7 @@ public class InitializationTgBot {
                     .setService(
                             baiduErnieService,
                             haSocketTemplate,
-                            homeAssistantUserService,
-                            homeAssistantHandshakeService
+                            homeAssistantUserService
                     );
             botsApi.registerBot(nanimonoBot);
         } catch (TelegramApiException e) {
