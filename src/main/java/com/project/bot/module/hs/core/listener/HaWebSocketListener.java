@@ -2,10 +2,12 @@ package com.project.bot.module.hs.core.listener;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.project.bot.module.chat.core.qq.impl.GroupMessageService;
 import com.project.bot.module.chat.core.tg.InitializationTgBot;
 import com.project.bot.module.chat.core.tg.bot.NanimonoBot;
 import com.project.bot.module.chat.pojo.entity.HomeAssistantHandshake;
 import com.project.bot.module.chat.pojo.entity.HomeAssistantUser;
+import com.project.bot.module.chat.pojo.vo.qq.group.QGroupMessage;
 import com.project.bot.module.chat.serivice.HomeAssistantHandshakeService;
 import com.project.bot.module.chat.serivice.HomeAssistantUserService;
 import com.project.bot.module.hs.HaSocketTemplate;
@@ -27,15 +29,19 @@ public class HaWebSocketListener {
 
     private final HaSocketTemplate haSocketTemplate;
 
+    private final GroupMessageService groupMessageService;
+
     @Autowired
     public HaWebSocketListener(HomeAssistantHandshakeService homeAssistantHandshakeService,
                                HomeAssistantUserService homeAssistantUserService,
                                InitializationTgBot initializationTgBot,
-                               HaSocketTemplate haSocketTemplate) {
+                               HaSocketTemplate haSocketTemplate,
+                               GroupMessageService groupMessageService) {
         this.homeAssistantHandshakeService = homeAssistantHandshakeService;
         this.homeAssistantUserService = homeAssistantUserService;
         this.initializationTgBot = initializationTgBot;
         this.haSocketTemplate = haSocketTemplate;
+        this.groupMessageService = groupMessageService;
     }
 
 
@@ -70,6 +76,9 @@ public class HaWebSocketListener {
             String response = haSocketTemplate.filterDeviceListFromTelegram(message.getPayload(), homeAssistantUser.getTelegramId());
             NanimonoBot bot = initializationTgBot.getNaimonoBot();
             bot.sendMessageToChat(response, handshake.getChatId());
+        }else {
+            String response = haSocketTemplate.filterDeviceListFromQq(message.getPayload(), homeAssistantUser.getQqId());
+            groupMessageService.sendMessage(QGroupMessage.buildQGroupMsg(response).toGroup(handshake.getChatId()));
         }
     }
 

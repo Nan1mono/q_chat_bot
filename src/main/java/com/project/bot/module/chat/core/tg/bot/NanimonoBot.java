@@ -58,7 +58,7 @@ public class NanimonoBot extends TelegramLongPollingBot {
             String response = "";
             // 查询是否配置了指定用户
             HomeAssistantUser homeAssistantUser = homeAssistantUserService.getByTelegramId(fromUser.getId());
-            if (ObjectUtils.isNotEmpty(homeAssistantUser)) {
+            if (ObjectUtils.isNotEmpty(homeAssistantUser) && "设备列表".equals(messageText)) {
                 // 发送webSocket请求，后续结果将从haSocketListener中接受并完成回调
                 haSocketTemplate.searchDevice("telegram", homeAssistantUser.getId(), message.getChatId());
             } else {

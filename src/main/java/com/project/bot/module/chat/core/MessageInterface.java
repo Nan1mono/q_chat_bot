@@ -26,4 +26,16 @@ public interface MessageInterface {
 
     BotMessage chatWithAi(Object message);
 
+    BotMessage getDeviceList(Object message);
+
+    BotMessage sendDeviceList(Object message, String chatId);
+
+    /**
+     * 提供一个手动发送消息的接口
+     * @param message 消息
+     */
+    default void sendMessage(BotMessage message){
+
+    }
+
 }

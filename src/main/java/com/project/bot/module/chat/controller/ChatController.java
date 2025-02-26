@@ -4,14 +4,12 @@ import com.alibaba.fastjson2.JSONObject;
 import com.project.bot.common.util.qq.QUtils;
 import com.project.bot.module.chat.core.qq.impl.GroupMessageService;
 import com.project.bot.module.chat.pojo.vo.qq.group.QGroupMessage;
-import com.project.bot.module.hs.core.sender.HaWebSocketSender;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Random;
@@ -25,18 +23,12 @@ public class ChatController {
 
     private final Random random = new Random();
 
-    @Value("${chat.napcat.client.group-url:you-client-url}")
-    private String clientGroupUrl;
-
     private final GroupMessageService groupMessageService;
 
-    private final HaWebSocketSender haWebSocketSender;
 
     @Autowired
-    public ChatController(GroupMessageService groupMessageService,
-                          HaWebSocketSender haWebSocketSender) {
+    public ChatController(GroupMessageService groupMessageService) {
         this.groupMessageService = groupMessageService;
-        this.haWebSocketSender = haWebSocketSender;
     }
 
     @PostMapping("/receive")
@@ -61,38 +53,12 @@ public class ChatController {
             response = groupMessageService.saveFriend(jsonObject);
         } else if (message.contains("帮助-如何添加介绍")) {
             response = groupMessageService.helpSaveFriend(jsonObject);
+        } else if (message.contains("设备列表")) {
+            response = groupMessageService.getDeviceList(jsonObject);
         } else {
             response = groupMessageService.chatWithAi(jsonObject);
         }
-        if (ObjectUtils.isNotEmpty(response)) {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("content-type", "application/json;charset=UTF-8");
-            HttpEntity<QGroupMessage> formEntity = new HttpEntity<>(response, headers);
-            restTemplate.postForObject(clientGroupUrl, formEntity, String.class);
-        }
-
-    }
-
-    @GetMapping("/socket/test")
-    public void socketTest() {
-//        haWebSocketSender.sendToWebSocket(JSON.toJSONString(sendAuthMessage()), null, null, null);
-//        haWebSocketSender.sendToWebSocket(JSON.toJSONString(getDeviceList()), null, null, null);
-    }
-
-
-
-    protected JSONObject subscribeToStates() {
-        JSONObject subscribeMessage = new JSONObject();
-        subscribeMessage.put("type", "subscribe_events");
-        subscribeMessage.put("event_type", "state_changed");
-        return subscribeMessage;
-    }
-
-    protected JSONObject getDeviceList() {
-        JSONObject subscribeMessage = new JSONObject();
-        subscribeMessage.put("id", 1);
-        subscribeMessage.put("type", "config/device_registry/list");
-        return subscribeMessage;
+        groupMessageService.sendMessage(response);
     }
 
 
