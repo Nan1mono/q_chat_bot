@@ -11,7 +11,7 @@ import com.project.bot.module.chat.pojo.vo.BotMessage;
 import com.project.bot.module.chat.pojo.vo.qq.group.QGroupMessage;
 import com.project.bot.module.chat.serivice.FriendService;
 import com.project.bot.module.chat.serivice.HomeAssistantUserService;
-import com.project.bot.module.hs.HaSocketTemplate;
+import com.project.bot.module.ha.HaSocketTemplate;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

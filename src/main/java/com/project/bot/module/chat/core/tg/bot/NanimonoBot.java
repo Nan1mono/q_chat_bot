@@ -4,7 +4,7 @@ import com.project.bot.module.chat.core.ernie.BaiduErnieService;
 import com.project.bot.module.chat.core.exception.ChatCoreException;
 import com.project.bot.module.chat.pojo.entity.HomeAssistantUser;
 import com.project.bot.module.chat.serivice.HomeAssistantUserService;
-import com.project.bot.module.hs.HaSocketTemplate;
+import com.project.bot.module.ha.HaSocketTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;

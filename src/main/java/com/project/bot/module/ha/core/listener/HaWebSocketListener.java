@@ -1,4 +1,4 @@
-package com.project.bot.module.hs.core.listener;
+package com.project.bot.module.ha.core.listener;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
@@ -10,7 +10,7 @@ import com.project.bot.module.chat.pojo.entity.HomeAssistantUser;
 import com.project.bot.module.chat.pojo.vo.qq.group.QGroupMessage;
 import com.project.bot.module.chat.serivice.HomeAssistantHandshakeService;
 import com.project.bot.module.chat.serivice.HomeAssistantUserService;
-import com.project.bot.module.hs.HaSocketTemplate;
+import com.project.bot.module.ha.HaSocketTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

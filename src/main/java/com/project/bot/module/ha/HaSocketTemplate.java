@@ -1,4 +1,4 @@
-package com.project.bot.module.hs;
+package com.project.bot.module.ha;
 
 
 import com.alibaba.fastjson2.JSON;
@@ -6,7 +6,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.google.common.collect.Lists;
 import com.project.bot.module.chat.pojo.entity.HomeAssistantUser;
 import com.project.bot.module.chat.serivice.HomeAssistantUserService;
-import com.project.bot.module.hs.core.sender.HaWebSocketSender;
+import com.project.bot.module.ha.core.sender.HaWebSocketSender;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

@@ -4,7 +4,7 @@ import com.project.bot.module.chat.core.ernie.BaiduErnieService;
 import com.project.bot.module.chat.core.exception.ChatCoreException;
 import com.project.bot.module.chat.core.tg.bot.NanimonoBot;
 import com.project.bot.module.chat.serivice.HomeAssistantUserService;
-import com.project.bot.module.hs.HaSocketTemplate;
+import com.project.bot.module.ha.HaSocketTemplate;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

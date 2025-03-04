@@ -1,4 +1,4 @@
-package com.project.bot.module.hs.core.sender;
+package com.project.bot.module.ha.core.sender;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
